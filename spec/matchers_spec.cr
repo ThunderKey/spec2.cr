@@ -339,7 +339,7 @@ Spec2.describe Spec2::Matchers do
           expect(42.05).to be_close(42, 0.01)
         }.to raise_error(
           Spec2::ExpectationNotMet,
-          "Expected to be close:\n        Expected:  42\n        Actual:    42.05\n        Max-delta: 0.01\n        Delta:     0.04999999999999716"
+          match(/Expected to be close:\n        Expected:  42\n        Actual:    42.05\n        Max-delta: 0.01\n        Delta:     0.049999999999997\d+/)
         )
       end
     end
@@ -522,14 +522,14 @@ Spec2.describe Spec2::Matchers do
     end
   end
 
-  describe (2 + 2) do
+  describe 2 + 2 do
     context "when describe uses literal expression" do
       it "fails" do
         expect {
           expect(described_class).to eq(4)
         }.to raise_error(
           Exception,
-          "(2 + 2) is expected to be a Class, not Int32"
+          "2 + 2 is expected to be a Class, not Int32"
         )
       end
     end
