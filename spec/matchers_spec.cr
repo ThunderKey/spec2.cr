@@ -529,7 +529,7 @@ Spec2.describe Spec2::Matchers do
           expect(described_class).to eq(4)
         }.to raise_error(
           Exception,
-          "2 + 2 is expected to be a Class, not Int32"
+          "(2 + 2) is expected to be a Class, not Int32"
         )
       end
     end
