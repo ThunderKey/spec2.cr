@@ -22,11 +22,11 @@ module Spec2
         end
 
         def to_milliseconds(ms)
-          if Crystal::VERSION =~ /\A0\.(2[0-3]|[01][0-9])\./ # < 0.24
+          {% if Crystal::VERSION =~ /\A0\.(2[0-3]|[01][0-9])\./ %} # < 0.24
             Time::Span.new(ms * 10_000)
-          else
+          {% else %}
             ms.milliseconds
-          end
+          {% end %}
         end
 
         it "returns in milliseconds rounded to .2" do
