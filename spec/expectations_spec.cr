@@ -48,6 +48,20 @@ class UnsuccessfulMatcher
 end
 Spec2.register_matcher(be_unsuccessful) { UnsuccessfulMatcher.new }
 
+class TestObject
+  def is_true?
+    true
+  end
+
+  def is_false?
+    false
+  end
+
+  def all_args?(a, b, c)
+    !!a && !!b && !!c && !!yield
+  end
+end
+
 Spec2.describe Spec2::Expectation do
   describe "to(...)" do
     it "passes when the matcher is successful" do
@@ -74,20 +88,6 @@ Spec2.describe Spec2::Expectation do
   end
 
   describe "to_be.[...]" do
-    class TestObject
-      def is_true?
-        true
-      end
-
-      def is_false?
-        false
-      end
-
-      def all_args?(a, b, c)#, &block)
-        !!a && !!b && !!c && !!yield#&& !!block.call
-      end
-    end
-
     describe "without args" do
       it "passes when it returns true" do
         expect(TestObject.new).to_be.is_true?
@@ -117,6 +117,35 @@ Spec2.describe Spec2::Expectation do
         end
         assert_expectation(/\AExpected #<#{TestObject}:[^>]+> to be all_args\? {true, true, true}\Z/) do
           expect(TestObject.new).to_be.all_args? true, true, true { false }
+        end
+      end
+    end
+  end
+
+  describe "not_to_be.[...]" do
+    describe "without args" do
+      it "passes when it returns false" do
+        expect(TestObject.new).not_to_be.is_false?
+      end
+
+      it "fails when it returns true" do
+        assert_expectation(/\AExpected #<#{TestObject}:[^>]+> not to be is_true\?\Z/) do
+          expect(TestObject.new).not_to_be.is_true?
+        end
+      end
+    end
+
+    describe "with args" do
+      it "passes when it returns false" do
+        expect(TestObject.new).not_to_be.all_args? false, true, true { true }
+        expect(TestObject.new).not_to_be.all_args? true, false, true { true }
+        expect(TestObject.new).not_to_be.all_args? true, true, false { true }
+        expect(TestObject.new).not_to_be.all_args? true, true, true { false }
+      end
+
+      it "fails when it returns true" do
+        assert_expectation(/\AExpected #<#{TestObject}:[^>]+> not to be all_args\? {true, true, true}\Z/) do
+          expect(TestObject.new).not_to_be.all_args?(true, true, true) { true }
         end
       end
     end
